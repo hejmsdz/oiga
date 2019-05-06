@@ -43,5 +43,6 @@ class GenreMatrix:
         del self.tracks['genres']
         
     def save(self):
-        target = os.path.join(self.root_dir, 'top_level_genres.csv')
-        return self.tracks.to_csv(target, index=False)
+        target = os.path.realpath(os.path.join(self.root_dir, 'top_level_genres.csv'))
+        self.tracks.to_csv(target, index=False)
+        return target, len(self.tracks)
