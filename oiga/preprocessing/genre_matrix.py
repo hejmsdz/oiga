@@ -40,8 +40,8 @@ class GenreMatrix:
             for genre_id in genres:
                 self.tracks.at[idx, genres_dict[genre_id]] = 1
         
-        self.tracks.drop(columns='genres')
+        del self.tracks['genres']
         
     def save(self):
         target = os.path.join(self.root_dir, 'top_level_genres.csv')
-        return self.tracks.to_csv(target)
+        return self.tracks.to_csv(target, index=False)
