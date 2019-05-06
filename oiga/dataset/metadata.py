@@ -8,14 +8,14 @@ class Metadata:
         self.root_dir = root_dir
         self.tracks = self.get_tracks()
         self.genres = self.get_genres()
-        self.add_genres_to_tracks()
+        self.process_genres()
     
     def get_tracks(self):
         return pd.read_csv(
             os.path.join(self.root_dir, 'tracks.csv'),
             skiprows=[0, 1, 2],
-            usecols=[0, 26, 41, 52],
-            names=['track_id', 'artist', 'genres', 'title']
+            usecols=[0, 41],
+            names=['track_id', 'genres']
         )
     
     def get_genres(self):
@@ -24,7 +24,7 @@ class Metadata:
             usecols=['genre_id', 'title', 'top_level']
         )
 
-    def add_genres_to_tracks(self):
+    def process_genres(self):
         genres_dict = {}
         top_level_genres = self.genres[self.genres.top_level == self.genres.genre_id]
         subgenres = self.genres[self.genres.top_level != self.genres.genre_id]
@@ -36,9 +36,11 @@ class Metadata:
             genres_dict[genre.genre_id] = genres_dict[genre.top_level]
         
         for idx, track in self.tracks[self.tracks.genres != '[]'].iterrows():
-            genres = map(int, track.genres[1:-1].split(','))
+            genres = map(int, track.genres[1:-1].split(', '))
             for genre_id in genres:
                 self.tracks.at[idx, genres_dict[genre_id]] = 1
+        
+        self.tracks.drop(columns='genres')
         
     def query(self, track_id):
         row = track_id[self.tracks.track_id == track_id]
