@@ -3,7 +3,7 @@ import os.path
 import numpy as np
 import pandas as pd
 
-class Metadata:
+class GenreMatrix:
     def __init__(self, root_dir):
         self.root_dir = root_dir
         self.tracks = self.get_tracks()
@@ -42,10 +42,6 @@ class Metadata:
         
         self.tracks.drop(columns='genres')
         
-    def query(self, track_id):
-        row = track_id[self.tracks.track_id == track_id]
-        return row
-
-if __name__ == '__main__':
-    metadata = Metadata('/mnt/data/Data/fma_metadata')
-    print(metadata.tracks)
+    def save(self):
+        target = os.path.join(self.root_dir, 'top_level_genres.csv')
+        return self.tracks.to_csv(target)
