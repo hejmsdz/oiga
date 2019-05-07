@@ -5,6 +5,7 @@ mccabe==0.6.1
 numpy==1.16.2
 oiga==1.0
 pkg-resources==0.0.0
+pydub==0.23.1
 pylint==2.3.1
 scipy==1.2.1
 six==1.12.0
