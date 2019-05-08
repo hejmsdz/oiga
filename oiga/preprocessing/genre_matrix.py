@@ -4,18 +4,20 @@ import numpy as np
 import pandas as pd
 
 class GenreMatrix:
-    def __init__(self, root_dir):
+    def __init__(self, root_dir, subset='large'):
         self.root_dir = root_dir
+        self.subset = subset
         self.tracks = self.get_tracks()
         self.genres = self.get_genres()
+        self.limit_subset()
         self.process_genres()
     
     def get_tracks(self):
         return pd.read_csv(
             os.path.join(self.root_dir, 'tracks.csv'),
             skiprows=[0, 1, 2],
-            usecols=[0, 41],
-            names=['track_id', 'genres']
+            usecols=[0, 31, 32, 41],
+            names=['track_id', 'split', 'subset', 'genres']
         )
     
     def get_genres(self):
@@ -41,7 +43,15 @@ class GenreMatrix:
                 self.tracks.at[idx, genres_dict[genre_id]] = 1
         
         del self.tracks['genres']
+    
+    def limit_subset(self):
+        if self.subset == 'medium' or self.subset == 'small':
+            self.tracks = self.tracks[self.tracks.subset != 'large']
+        if self.subset == 'small':
+            self.tracks = self.tracks[self.tracks.subset != 'medium']
+        del self.tracks['subset']
         
+    
     def save(self):
         target = os.path.realpath(os.path.join(self.root_dir, 'top_level_genres.csv'))
         self.tracks.to_csv(target, index=False)
