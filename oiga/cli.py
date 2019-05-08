@@ -18,8 +18,9 @@ class CLI:
     def preprocess(self, args):
         parser = argparse.ArgumentParser(description='Preprocess the dataset')
         parser.add_argument('metadata_root')
+        parser.add_argument('--subset', choices=['small', 'medium', 'large'], default='large')
         args = parser.parse_args(args)
 
-        genre_matrix = GenreMatrix(args.metadata_root)
+        genre_matrix = GenreMatrix(args.metadata_root, args.subset)
         target, nrows = genre_matrix.save()
         print(f"Successfully written {nrows} rows to {target}")
