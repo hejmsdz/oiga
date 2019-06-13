@@ -4,6 +4,7 @@ import sys
 from .preprocessing import GenreMatrix
 from .analysis.beat import Beat
 from .analysis.key import Key
+from .genre import GenreClassifier
 
 class CLI:
     def __init__(self):
@@ -35,6 +36,7 @@ class CLI:
 
         beat = Beat(args.track)
         key = Key(args.track)
+        genre = GenreClassifier()
 
         print(f"Tempo: {beat.bpm():.1f} BPM")
         print(f"Key signature: {key.key_signature()}")
@@ -42,3 +44,5 @@ class CLI:
         for note, val in key.note_distribution().items():
             bar = '#' * int(val * 20)
             print(f"* {note:3}: {val:.03f} [{bar:_<20}]")
+        
+        print(f"Detected genre: {genre.predict(args.track)}")

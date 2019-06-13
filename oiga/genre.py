@@ -24,7 +24,7 @@ class GenreClassifier:
             spec = spec.reshape(1, 1, spec.shape[0], spec.shape[1]).astype('float32')
             expected_genre.append(np.argmax(self.model.predict(spec)[0]))
         counts = np.bincount(expected_genre)
-        return np.argmax(counts)
+        return {0: 'hip-hop', 1: 'not hip-hop'}[np.argmax(counts)]
 
 if __name__ == '__main__':
     import sys
