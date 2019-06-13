@@ -8,27 +8,28 @@ import numpy as np
 import sys
 import os
 
-def generate_spectrograms(track, div):
+def generate_spectrograms(track, sr, div):
     subtrack_len = len(track)//div
     for d in range(div):
         subtrack = track[d*subtrack_len : (d+1)*subtrack_len]
         freq, times, spec = signal.spectrogram(subtrack, fs = sr)
+        spec = 10*np.log(spec)
 
         spec = block_reduce(spec,(2,5),func=np.mean)
-        print(spec.shape)
-        plt.pcolormesh(10*np.log10(spec))
-        plt.show()
-        #yield spec
+        yield spec
 
+if __name__=='__main__':
+        print(sys.argv[1])
+        files = os.listdir(sys.argv[1])
+        files = [f for f in files if f.split('.')[-1]=='mp3']
+        for f in files:
+                sr, x = read_mp3(sys.argv[1]+'/'+f)
 
-print(sys.argv[1])
-files = os.listdir(sys.argv[1])
-files = [f for f in files if f.split('.')[-1]=='mp3']
-for f in files:
-    sr, x = read_mp3(sys.argv[1]+'/'+f)
+                x = np.average(x, axis=1)
+                
+                for i,s in enumerate(generate_spectrograms(x, sr, 12)):
+                        plt.pcolormesh(s)
+                plt.show()
+                break
 
-    x = np.average(x, axis=1)
-    
-    generate_spectrograms(x, 12)
-    break
 
